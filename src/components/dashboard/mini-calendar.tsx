@@ -1,17 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { IconButton } from "@/components/ui/icon-button";
-import { getCalendarMonth, shiftMonth, type CalendarDay } from "@/lib/calendar";
-import {
-  CALENDAR_EVENT_DATES,
-  CALENDAR_INITIAL_MONTH,
-  CALENDAR_INITIAL_YEAR,
-  CALENDAR_SELECTED_DATE,
-} from "@/data/mock-calendar";
+import { getCalendarMonth, type CalendarDay } from "@/lib/calendar";
+import { CALENDAR_EVENT_DATES } from "@/data/mock-calendar";
+import { useAppStore } from "@/stores/app-store";
 import { cn } from "@/lib/utils";
 
 const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -23,21 +18,22 @@ const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
  * spec with zero extension; `radius-xl` was reserved for "calendar
  * widget" specifically back in Phase 2's radius-scale table).
  *
- * Month navigation is real (`useState`, no external store needed) —
- * deterministic and side-effect-free, so the initial render (May 2025,
- * matching the reference exactly) is what Playwright/QA always sees on
- * load, and every subsequent state is a pure function of click count,
- * never the real current date.
+ * Month cursor and the selected date now live in `useAppStore` (not a
+ * local `useState`) so the full `/calendar` page can share the exact
+ * same navigation/selection state — picking a date here and opening
+ * "View full calendar" lands on that date already selected there, and
+ * vice versa. Still fully deterministic: the store's initial values are
+ * the same fixed May 2025 / 20th constants this always used, never
+ * derived from the real current date.
  */
 export function MiniCalendar() {
-  const [{ year, month }, setCursor] = useState({
-    year: CALENDAR_INITIAL_YEAR,
-    month: CALENDAR_INITIAL_MONTH,
-  });
-  const calendarMonth = getCalendarMonth(year, month);
+  const year = useAppStore((state) => state.calendarYear);
+  const month = useAppStore((state) => state.calendarMonth);
+  const selectedDate = useAppStore((state) => state.selectedDate);
+  const shiftCalendarMonth = useAppStore((state) => state.shiftCalendarMonth);
+  const selectDate = useAppStore((state) => state.selectDate);
 
-  const goToPreviousMonth = () => setCursor((cursor) => shiftMonth(cursor.year, cursor.month, -1));
-  const goToNextMonth = () => setCursor((cursor) => shiftMonth(cursor.year, cursor.month, 1));
+  const calendarMonth = getCalendarMonth(year, month);
 
   return (
     <Card
@@ -61,14 +57,14 @@ export function MiniCalendar() {
             aria-label="Previous month"
             size="sm"
             variant="ghost"
-            onClick={goToPreviousMonth}
+            onClick={() => shiftCalendarMonth(-1)}
           />
           <IconButton
             icon={<ChevronRight className="h-4 w-4" aria-hidden="true" />}
             aria-label="Next month"
             size="sm"
             variant="ghost"
-            onClick={goToNextMonth}
+            onClick={() => shiftCalendarMonth(1)}
           />
         </div>
       </div>
@@ -86,13 +82,17 @@ export function MiniCalendar() {
 
       <div className="mt-2 grid grid-cols-7">
         {calendarMonth.days.map((day) => (
-          <CalendarDayCell key={day.isoDate} day={day} />
+          <CalendarDayCell
+            key={day.isoDate}
+            day={day}
+            isSelected={day.isoDate === selectedDate}
+            onSelect={() => selectDate(day.isoDate)}
+          />
         ))}
       </div>
 
       <Link
         href="/calendar"
-        prefetch={false}
         className="text-label text-brand-800 focus-visible:ring-brand-800 focus-visible:ring-offset-surface mt-4 inline-flex w-fit items-center gap-1.5 rounded-xs hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
@@ -104,33 +104,43 @@ export function MiniCalendar() {
 
 interface CalendarDayCellProps {
   day: CalendarDay;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
 /**
- * Single date cell. components.md: 6×7 grid, ~48×36px cells, 13px date
- * number; a 32×32 filled circle marks the selected date, a 4px dot marks
- * event dates. The dot is only rendered for non-selected cells — the
- * selected day's own 32px circle already fills nearly all of the 36px
- * cell height, and stacking a dot beneath it isn't evidenced in the spec
- * and would overflow the cell (32px circle + 2px gap + 4px dot = 38px >
- * 36px). An invisible same-size spacer keeps every non-selected cell's
- * number vertically aligned whether or not it has an event.
+ * Single date cell — now a real `<button>` (was a decorative `<div>`
+ * before this pass): clicking selects the date app-wide via
+ * `useAppStore().selectDate`. components.md: 6×7 grid, ~48×36px cells,
+ * 13px date number; a 32×32 filled circle marks the selected date, a
+ * 4px dot marks event dates. The dot is only rendered for non-selected
+ * cells — the selected day's own 32px circle already fills nearly all
+ * of the 36px cell height, and stacking a dot beneath it would overflow
+ * the cell (32px circle + 2px gap + 4px dot = 38px > 36px). An invisible
+ * same-size spacer keeps every non-selected cell's number vertically
+ * aligned whether or not it has an event.
  */
-function CalendarDayCell({ day }: CalendarDayCellProps) {
-  const isSelected = day.isoDate === CALENDAR_SELECTED_DATE;
+function CalendarDayCell({ day, isSelected, onSelect }: CalendarDayCellProps) {
   const hasEvent = CALENDAR_EVENT_DATES.includes(day.isoDate);
 
   return (
-    <div className="flex h-9 flex-col items-center justify-center gap-0.5">
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={isSelected}
+      aria-label={`Select ${day.isoDate}${isSelected ? ", selected" : ""}`}
+      className="focus-visible:ring-brand-800 flex h-9 flex-col items-center justify-center gap-0.5 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+    >
       <span
         className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-full text-sm",
-          isSelected ? "bg-brand-800 text-surface font-semibold" : "font-normal",
+          "flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors",
+          isSelected
+            ? "bg-brand-800 text-surface font-semibold"
+            : "hover:bg-surface-alt font-normal",
           !isSelected && (day.isCurrentMonth ? "text-ink" : "text-ink/40"),
         )}
       >
         {day.date}
-        {isSelected ? <span className="sr-only"> (selected)</span> : null}
       </span>
       {!isSelected &&
         (hasEvent ? (
@@ -138,6 +148,6 @@ function CalendarDayCell({ day }: CalendarDayCellProps) {
         ) : (
           <span className="h-1 w-1" aria-hidden="true" />
         ))}
-    </div>
+    </button>
   );
 }

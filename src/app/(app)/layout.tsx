@@ -2,18 +2,32 @@ import type { ReactNode } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MainContentShell } from "@/components/layout/main-content-shell";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { ModalHost } from "@/components/dashboard/modal-host";
+import { Toaster } from "@/components/ui/toast";
 
 /**
  * Shared shell for every authenticated app route (`/dashboard`,
- * `/meetings`, `/calendar`, ...): the full sidebar plus the main content
- * boundary. Route content (header, dashboard widgets, ...) is built in
- * later phases inside `MainContentShell`'s children.
+ * `/meetings`, `/calendar`, ...): sidebar + header + main content
+ * boundary. `DashboardHeader` was promoted here from the dashboard page
+ * itself once a second route needed it — every route now gets the same
+ * search/notifications/avatar row for free instead of re-importing it
+ * per page. `ModalHost`/`Toaster` are mounted once here too: both render
+ * `null`/nothing unless their store state says otherwise, so they add
+ * zero visual footprint on pages that don't use them.
  */
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <AppShell>
       <Sidebar />
-      <MainContentShell>{children}</MainContentShell>
+      <MainContentShell>
+        <div className="flex flex-1 flex-col gap-4 md:gap-6">
+          <DashboardHeader />
+          {children}
+        </div>
+      </MainContentShell>
+      <ModalHost />
+      <Toaster />
     </AppShell>
   );
 }

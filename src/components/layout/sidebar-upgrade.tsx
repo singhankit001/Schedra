@@ -1,5 +1,8 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { UpgradeIllustration } from "@/components/illustrations/upgrade-illustration";
+import { useAppStore } from "@/stores/app-store";
 
 /**
  * Upgrade-to-Pro promo card. Not built on the `Card` primitive — mirrors
@@ -9,19 +12,14 @@ import { UpgradeIllustration } from "@/components/illustrations/upgrade-illustra
  * scale steps exactly at this content density; keeping it a bespoke `div`
  * avoids fighting the primitive's own padding options for one card.
  *
- * Corrected against the reference image (see DESIGN_SYSTEM.md, "Sidebar
- * color scheme correction"): the card is a light surface like every
- * other card in the app, not a dark sidebar-toned one.
- *
- * Button geometry: see button.tsx's `md` size comment for the Phase 3
- * resolution of the components.md/layout.md conflict (184×36, radius 8).
- * Variant is `primary` (solid brand-green fill, white text) — the
- * reference clearly shows a solid dark-green "Upgrade Now" button, the
- * same treatment as the New Meeting CTA. No focus-ring override needed
- * anymore: `Button`'s default `ring-offset-app` is already correct now
- * that this card sits on a light surface.
+ * "Upgrade Now" opens a real modal (`UpgradeModal`) rather than a dead
+ * button — no billing backend exists, so it shows the plan's real
+ * feature list and hands off to the actual `/billing` page instead of
+ * faking a checkout flow.
  */
 export function SidebarUpgrade() {
+  const openModal = useAppStore((state) => state.openModal);
+
   return (
     <div className="bg-surface border-border shadow-card flex flex-col items-center gap-3 rounded-lg border p-4 text-center">
       <UpgradeIllustration />
@@ -29,7 +27,12 @@ export function SidebarUpgrade() {
         <p className="text-ink text-base font-semibold">Upgrade to Pro</p>
         <p className="text-ink-muted text-xs">Unlock advanced features and grow your business.</p>
       </div>
-      <Button variant="primary" size="md" className="w-full">
+      <Button
+        variant="primary"
+        size="md"
+        className="w-full"
+        onClick={() => openModal({ type: "upgrade" })}
+      >
         Upgrade Now
       </Button>
     </div>

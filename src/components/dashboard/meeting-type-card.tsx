@@ -1,7 +1,12 @@
-import { Link2, MoreVertical } from "lucide-react";
+"use client";
+
+import { Link2, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { IconButton } from "@/components/ui/icon-button";
+import { DropdownMenu } from "@/components/ui/dropdown-menu";
+import { copyMeetingTypeLink } from "@/lib/meeting-actions";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/stores/app-store";
 import type { MeetingFormat } from "@/types/meeting-type";
 import type { MeetingTypeAccent, MeetingTypeCardData } from "@/data/mock-meeting-types";
 
@@ -40,10 +45,16 @@ export interface MeetingTypeCardProps {
  * (2-line clamp), meta 4px below title, "Copy link" row 12px below meta.
  * Built on `Card` (`padding="sm"` = 16px, `radius="lg"` = 16px — both
  * already match the spec with zero extension, same reuse as `StatCard`).
+ *
+ * "Copy link" now does a real `navigator.clipboard.writeText` + toast.
+ * The kebab opens a real menu: "Edit" (rename, via a small modal) and
+ * "Delete" (confirmation-gated removal from the store).
  */
 export function MeetingTypeCard({ data }: MeetingTypeCardProps) {
   const { meetingType, icon: Icon, accent } = data;
   const accentStyle = ACCENT_STYLES[accent];
+  const openModal = useAppStore((state) => state.openModal);
+  const showToast = useAppStore((state) => state.showToast);
 
   return (
     <Card padding="sm" className="flex min-h-27 flex-col">
@@ -56,11 +67,32 @@ export function MeetingTypeCard({ data }: MeetingTypeCardProps) {
         >
           <Icon className={cn("h-5 w-5", accentStyle.icon)} aria-hidden="true" strokeWidth={2} />
         </span>
-        <IconButton
-          icon={<MoreVertical className="h-3.5 w-3.5" aria-hidden="true" />}
-          aria-label={`More options for ${meetingType.name}`}
-          size="xs"
-          variant="ghost"
+        <DropdownMenu
+          label={`More options for ${meetingType.name}`}
+          align="end"
+          trigger={
+            <IconButton
+              icon={<MoreVertical className="h-3.5 w-3.5" aria-hidden="true" />}
+              aria-label={`More options for ${meetingType.name}`}
+              size="xs"
+              variant="ghost"
+            />
+          }
+          items={[
+            {
+              label: "Edit",
+              icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+              onSelect: () =>
+                openModal({ type: "edit-meeting-type", meetingTypeId: meetingType.id }),
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
+              variant: "danger",
+              onSelect: () =>
+                openModal({ type: "delete-meeting-type", meetingTypeId: meetingType.id }),
+            },
+          ]}
         />
       </div>
 
@@ -69,13 +101,16 @@ export function MeetingTypeCard({ data }: MeetingTypeCardProps) {
         {meetingType.durationMinutes} mins &bull; {FORMAT_LABEL[meetingType.format]}
       </p>
 
-      {/* Bespoke, not built on `Button` — the reference shows a plain
-          inline icon+text control (no button chrome/padding/fixed
-          height), which `Button`'s size scale doesn't represent. No
-          clipboard behavior wired up (consistent with Join/kebab/"View
-          all" elsewhere in the app not having real behavior yet). */}
       <button
         type="button"
+        onClick={() => {
+          void copyMeetingTypeLink(meetingType).then((ok) => {
+            showToast(
+              ok ? "Meeting link copied" : "Couldn't copy link — try again",
+              ok ? "success" : "error",
+            );
+          });
+        }}
         className="text-caption text-brand-800 focus-visible:ring-brand-800 focus-visible:ring-offset-surface mt-3 inline-flex w-fit items-center gap-1.5 rounded-xs hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         <Link2 className="h-3.5 w-3.5" aria-hidden="true" />

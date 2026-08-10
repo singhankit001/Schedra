@@ -27,6 +27,13 @@ function utcDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+/** Today's date as "YYYY-MM-DD", UTC-pinned like everything else in this
+ * module — used to filter the dashboard's "Upcoming Meetings"/"Today's
+ * Schedule" sections to exactly today's meetings from the shared store. */
+export function getTodayIsoDate(): string {
+  return utcDateKey(new Date());
+}
+
 /** "09:30 AM" */
 export function formatMeetingTime(iso: string): string {
   return timeFormatter.format(new Date(iso));

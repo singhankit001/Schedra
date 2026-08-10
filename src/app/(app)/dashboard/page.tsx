@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { UpcomingMeetings } from "@/components/dashboard/upcoming-meetings";
@@ -13,9 +12,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * layout.md §5: the header spans the full content width above a
- * two-column grid (left 776px / 24px gap / right 376px). Every dashboard
- * section built so far (Phases 4–10) is composed here.
+ * layout.md §5: the header (now rendered once by `AppLayout`, shared
+ * across every route) spans the full content width above a two-column
+ * grid (left 776px / 24px gap / right 376px). Every dashboard section
+ * built so far is composed here.
  *
  * Responsive (Phase 11, responsive.md §31): below `xl` (1440px, the
  * reference's own breakpoint) the two-column row becomes
@@ -41,23 +41,20 @@ export const metadata: Metadata = {
  */
 export default function DashboardPage() {
   return (
-    <div className="flex flex-1 flex-col gap-4 md:gap-6">
-      <DashboardHeader />
-      <div className="flex flex-col gap-4 md:gap-6 xl:flex-row">
-        <div className="xl:w-col-left flex w-full flex-col gap-4 md:gap-6">
-          <WelcomeBanner />
-          <DashboardStats />
-          <UpcomingMeetings />
-          <MeetingTypes />
+    <div className="flex flex-col gap-4 md:gap-6 xl:flex-row">
+      <div className="xl:w-col-left flex w-full flex-col gap-4 md:gap-6">
+        <WelcomeBanner />
+        <DashboardStats />
+        <UpcomingMeetings />
+        <MeetingTypes />
+      </div>
+      <div className="xl:w-col-right flex w-full flex-col">
+        <MiniCalendar />
+        <div className="mt-4 md:mt-6">
+          <TodaysSchedule />
         </div>
-        <div className="xl:w-col-right flex w-full flex-col">
-          <MiniCalendar />
-          <div className="mt-4 md:mt-6">
-            <TodaysSchedule />
-          </div>
-          <div className="mt-4">
-            <NewMeetingCta />
-          </div>
+        <div className="mt-4">
+          <NewMeetingCta />
         </div>
       </div>
     </div>

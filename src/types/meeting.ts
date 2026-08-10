@@ -17,6 +17,10 @@ export const meetingSchema = z.object({
   status: meetingStatusSchema,
   joinUrl: z.string().url().optional(),
   attendees: z.array(contactSchema),
+  /** Free-text notes captured on creation — added for the New Meeting
+   * form; optional so every existing mock meeting stays valid without
+   * modification. */
+  notes: z.string().optional(),
 });
 
 export type Meeting = z.infer<typeof meetingSchema>;

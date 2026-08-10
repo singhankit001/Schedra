@@ -1,13 +1,11 @@
-import { MoreVertical } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/icon-button";
+import { MeetingActionsMenu } from "@/components/dashboard/meeting-actions-menu";
+import { MeetingPlatformIcon, PROVIDER_LABEL } from "@/components/dashboard/meeting-platform-icon";
+import { ParticipantStack } from "@/components/dashboard/participant-stack";
 import { formatMeetingDay, formatMeetingTime } from "@/lib/meeting-time";
-import { PROVIDER_STYLES } from "@/lib/meeting-provider";
-import { cn, getInitials } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useAppStore } from "@/stores/app-store";
 import type { Meeting } from "@/types/meeting";
-
-const VISIBLE_ATTENDEES = 2;
 
 export interface MeetingRowProps {
   meeting: Meeting;
@@ -23,23 +21,18 @@ export interface MeetingRowProps {
  * margin on the receiving element (not a blanket flex `gap`) because the
  * five gaps in this row are not uniform (12/12/16/16/8px).
  *
+ * Join opens the meeting-details modal (`MeetingDetailsModal`) — there's
+ * no real video-conferencing backend, so this is the honest fallback the
+ * brief itself prescribes for mock data, not a dead button. The kebab
+ * (`MeetingActionsMenu`) is a real, working dropdown: view details, copy
+ * a share link (Clipboard API), cancel (with confirmation).
+ *
  * Responsive (Phase 11): below `md` (900px) both the avatar stack and
- * the provider icon are hidden, per responsive.md's own priority order
- * ("hide avatar stack and/or provider icon before hiding the Join
- * button or title — title/time/Join are the minimum viable row"). The
- * threshold is `md`, not `sm` (600px): measured with Playwright, the
- * row's real minimum content width only clears the available space
- * from ~700px up with both hidden, so gating the hide at `sm` left a
- * 600–699px gap where the title collapsed to 0 width and disappeared
- * entirely — worse than the spec's own stated floor. `md` (900px) was
- * chosen as the nearest existing breakpoint token clear of that gap
- * with margin to spare, rather than adding a one-off custom value.
+ * the provider icon are hidden — see the git history for the measured
+ * reasoning (unchanged by this pass).
  */
 export function MeetingRow({ meeting, isLast = false }: MeetingRowProps) {
-  const provider = PROVIDER_STYLES[meeting.provider];
-  const ProviderIcon = provider.icon;
-  const shownAttendees = meeting.attendees.slice(0, VISIBLE_ATTENDEES);
-  const overflowCount = meeting.attendees.length - shownAttendees.length;
+  const openModal = useAppStore((state) => state.openModal);
 
   return (
     <div className={cn("flex items-center py-4", !isLast && "border-border-divider border-b")}>
@@ -49,12 +42,8 @@ export function MeetingRow({ meeting, isLast = false }: MeetingRowProps) {
       </div>
 
       <span className="ml-3 hidden h-6 w-6 shrink-0 items-center justify-center md:inline-flex">
-        <ProviderIcon
-          className={cn("h-6 w-6", provider.color)}
-          aria-hidden="true"
-          strokeWidth={1.75}
-        />
-        <span className="sr-only">{provider.label}</span>
+        <MeetingPlatformIcon provider={meeting.provider} size={24} />
+        <span className="sr-only">{PROVIDER_LABEL[meeting.provider]}</span>
       </span>
 
       <div className="ml-3 flex min-w-0 flex-1 flex-col gap-0.5">
@@ -64,41 +53,18 @@ export function MeetingRow({ meeting, isLast = false }: MeetingRowProps) {
         ) : null}
       </div>
 
-      {/* responsive.md §31 → "Lists": at narrow widths, hide the avatar
-          stack before the Join button or title — title/time/Join are the
-          minimum viable row. Hidden below `md` (900px), unchanged from
-          `md` up (including the validated 1536px reference view). */}
-      <div className="ml-4 hidden shrink-0 items-center md:flex">
-        {shownAttendees.map((attendee, index) => (
-          <Avatar
-            key={attendee.id}
-            size="sm"
-            alt={attendee.name}
-            initials={getInitials(attendee.name)}
-            className={cn("ring-surface ring-2", index > 0 && "-ml-2")}
-          />
-        ))}
-        {overflowCount > 0 ? (
-          <span
-            className="ring-surface bg-surface-alt text-ink-muted text-micro -ml-2 flex h-6 w-6 items-center justify-center rounded-full font-semibold ring-2"
-            aria-label={`${overflowCount} more attendee${overflowCount === 1 ? "" : "s"}`}
-          >
-            +{overflowCount}
-          </span>
-        ) : null}
-      </div>
+      <ParticipantStack participants={meeting.attendees} className="ml-4 hidden shrink-0 md:flex" />
 
-      <Button size="sm" variant="subtle" className="ml-4 w-18 shrink-0">
+      <Button
+        size="sm"
+        variant="subtle"
+        className="ml-4 w-18 shrink-0"
+        onClick={() => openModal({ type: "meeting-details", meetingId: meeting.id })}
+      >
         Join
       </Button>
 
-      <IconButton
-        icon={<MoreVertical className="h-4 w-4" aria-hidden="true" />}
-        aria-label={`More options for ${meeting.title}`}
-        size="sm"
-        variant="ghost"
-        className="ml-2 shrink-0"
-      />
+      <MeetingActionsMenu meeting={meeting} size="sm" className="ml-2 shrink-0" />
     </div>
   );
 }

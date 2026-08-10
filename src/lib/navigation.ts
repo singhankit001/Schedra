@@ -18,13 +18,11 @@ export interface NavigationItem {
   label: string;
   href: string;
   icon: LucideIcon;
-  /** Whether `href` currently resolves to a real page. Only `/dashboard`
-   * exists so far (Phase 1/3 scope) — the rest are real links ready for
-   * later phases to fill in, but Next.js prefetches every in-viewport
-   * `<Link>` by default, and prefetching a route with no page 404s in the
-   * console. `SidebarNavItem` disables prefetch for anything not yet
-   * implemented so the sidebar stays console-clean without having to stub
-   * out ten placeholder pages this phase. */
+  /** Whether `href` currently resolves to a real page. Every item is now
+   * `true` — all 11 routes have real pages. Kept as a field (rather than
+   * removed) since `SidebarNavItem` still reads it to decide whether to
+   * prefetch, and a future route added here before its page exists would
+   * want the same "don't prefetch a 404" protection this always gave. */
   implemented?: boolean;
 }
 
@@ -46,14 +44,32 @@ export const NAV_ITEMS: NavigationItem[] = [
     icon: LayoutDashboard,
     implemented: true,
   },
-  { id: "meetings", label: "Meetings", href: "/meetings", icon: Video },
-  { id: "calendar", label: "Calendar", href: "/calendar", icon: CalendarDays },
-  { id: "availability", label: "Availability", href: "/availability", icon: Clock },
-  { id: "meeting-types", label: "Meeting Types", href: "/meeting-types", icon: LayoutList },
-  { id: "contacts", label: "Contacts", href: "/contacts", icon: Contact },
-  { id: "analytics", label: "Analytics", href: "/analytics", icon: BarChart3 },
-  { id: "integrations", label: "Integrations", href: "/integrations", icon: Puzzle },
-  { id: "team", label: "Team", href: "/team", icon: Users },
-  { id: "billing", label: "Billing", href: "/billing", icon: CreditCard },
-  { id: "settings", label: "Settings", href: "/settings", icon: Settings },
+  { id: "meetings", label: "Meetings", href: "/meetings", icon: Video, implemented: true },
+  { id: "calendar", label: "Calendar", href: "/calendar", icon: CalendarDays, implemented: true },
+  {
+    id: "availability",
+    label: "Availability",
+    href: "/availability",
+    icon: Clock,
+    implemented: true,
+  },
+  {
+    id: "meeting-types",
+    label: "Meeting Types",
+    href: "/meeting-types",
+    icon: LayoutList,
+    implemented: true,
+  },
+  { id: "contacts", label: "Contacts", href: "/contacts", icon: Contact, implemented: true },
+  { id: "analytics", label: "Analytics", href: "/analytics", icon: BarChart3, implemented: true },
+  {
+    id: "integrations",
+    label: "Integrations",
+    href: "/integrations",
+    icon: Puzzle,
+    implemented: true,
+  },
+  { id: "team", label: "Team", href: "/team", icon: Users, implemented: true },
+  { id: "billing", label: "Billing", href: "/billing", icon: CreditCard, implemented: true },
+  { id: "settings", label: "Settings", href: "/settings", icon: Settings, implemented: true },
 ];

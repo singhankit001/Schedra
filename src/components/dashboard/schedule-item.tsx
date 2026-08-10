@@ -1,7 +1,6 @@
-import { MoreVertical } from "lucide-react";
-import { IconButton } from "@/components/ui/icon-button";
+import { MeetingActionsMenu } from "@/components/dashboard/meeting-actions-menu";
+import { MeetingPlatformIcon, PROVIDER_LABEL } from "@/components/dashboard/meeting-platform-icon";
 import { formatMeetingTime } from "@/lib/meeting-time";
-import { PROVIDER_STYLES } from "@/lib/meeting-provider";
 import { cn } from "@/lib/utils";
 import type { Meeting } from "@/types/meeting";
 
@@ -20,15 +19,14 @@ export interface ScheduleItemProps {
  * 12px padding) containing provider icon (24×24), title 14/600,
  * subtitle 13/400 muted, and a 20×20 kebab top-right.
  *
- * Reuses `Meeting`/`PROVIDER_STYLES` exactly as `MeetingRow` (Phase 6)
- * does — qa-checklist.md requires this section show "the same 4 events
- * as Upcoming Meetings, mirrored correctly," so both components render
- * off the same data and the same provider→glyph/color mapping.
+ * Reuses `Meeting`/`MeetingPlatformIcon` exactly as `MeetingRow` does —
+ * qa-checklist.md requires this section show "the same 4 events as
+ * Upcoming Meetings, mirrored correctly," so both components render off
+ * the same data and the same provider→icon mapping. The kebab is the
+ * same real `MeetingActionsMenu` `MeetingRow` uses (view/copy/cancel),
+ * not a separate implementation.
  */
 export function ScheduleItem({ meeting, isLast = false }: ScheduleItemProps) {
-  const provider = PROVIDER_STYLES[meeting.provider];
-  const ProviderIcon = provider.icon;
-
   return (
     <div className={cn("flex", !isLast && "pb-3")}>
       <div className="flex w-14 shrink-0 justify-end pt-1 pr-3">
@@ -43,12 +41,8 @@ export function ScheduleItem({ meeting, isLast = false }: ScheduleItemProps) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex min-w-0 items-start gap-3">
             <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center">
-              <ProviderIcon
-                className={cn("h-6 w-6", provider.color)}
-                aria-hidden="true"
-                strokeWidth={1.75}
-              />
-              <span className="sr-only">{provider.label}</span>
+              <MeetingPlatformIcon provider={meeting.provider} size={24} />
+              <span className="sr-only">{PROVIDER_LABEL[meeting.provider]}</span>
             </span>
             <div className="flex min-w-0 flex-col gap-0.5">
               {/* responsive.md §31 → "Lists": "event card content wraps
@@ -62,13 +56,7 @@ export function ScheduleItem({ meeting, isLast = false }: ScheduleItemProps) {
             </div>
           </div>
 
-          <IconButton
-            icon={<MoreVertical className="h-3.5 w-3.5" aria-hidden="true" />}
-            aria-label={`More options for ${meeting.title}`}
-            size="xs"
-            variant="ghost"
-            className="shrink-0"
-          />
+          <MeetingActionsMenu meeting={meeting} size="xs" className="shrink-0" />
         </div>
       </div>
     </div>
