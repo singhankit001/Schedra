@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/*
+ * MeetPlan design tokens.
+ *
+ * Source of truth: /visual-spec/*.md (colors.md, typography.md, spacing.md,
+ * components.md). Every token below maps 1:1 to a value documented there —
+ * do not add arbitrary values here without updating the spec first.
+ */
+@theme {
+  /* ---- Font family (typography.md) ---- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Colors (colors.md) ---- */
+  /* Canvas / surfaces */
+  --color-canvas: #0b1f14; /* outer window background */
+  --color-app: #f8f5ef; /* main content panel background */
+  --color-surface: #ffffff; /* card / list / input surfaces */
+  --color-surface-alt: #fcfaf6; /* subtle tint / hover surface */
+  --color-banner-from: #f3ecdd; /* welcome banner gradient start */
+  --color-banner-to: #f6e7d9; /* welcome banner gradient end */
+
+  /* Brand green scale */
+  --color-brand-900: #0e2a1d;
+  --color-brand-800: #163c2c; /* primary brand / CTA color */
+  --color-brand-600: #2f8f5b; /* success / trend / online status */
+  --color-brand-100: #e4efe7;
+
+  /* Accents */
+  --color-accent-orange: #f0a15c;
+  --color-accent-orange-100: #fbeada;
+  --color-accent-blue: #4c8df5;
+  --color-accent-purple: #6c6fd0;
+  --color-accent-pink: #f6dde0;
+  --color-accent-sage: #a9c3a6;
+
+  /* Borders */
+  --color-border: #ece7dc;
+  --color-border-divider: #efeae0;
+
+  /* Text (spec defines one secondary/muted tone; both alias the same value) */
+  --color-ink: #1b1f1c;
+  --color-ink-muted: #8a8478;
+
+  /* Danger — NOT present in visual-spec (the reference screenshot has no
+   * error/validation UI to sample). Added as the minimal token needed for
+   * Input's required "error" state; kept in the same warm, muted register
+   * as the rest of the palette rather than a stock saturated red. Flag for
+   * design approval if/when an error state actually appears in a future
+   * reference. */
+  --color-danger: #c4432c;
+  --color-danger-100: #f7e4de;
+
+  /* ---- Font sizes (typography.md), paired with spec line-heights ---- */
+  --text-2xs: 0.625rem; /* 10px — notification badge count */
+  --text-2xs--line-height: 1;
+
+  --text-micro: 0.6875rem; /* 11px — calendar weekday labels */
+  --text-micro--line-height: 1.3;
+
+  --text-xs: 0.75rem; /* 12px — meta text, trend deltas, card meta */
+  --text-xs--line-height: 1.4;
+
+  --text-sm: 0.8125rem; /* 13px — subtitles, list times, small links */
+  --text-sm--line-height: 1.4;
+
+  --text-base: 0.875rem; /* 14px — body, buttons, nav labels, titles */
+  --text-base--line-height: 1.4;
+
+  --text-md: 1rem; /* 16px — greeting text, calendar month label */
+  --text-md--line-height: 1.4;
+
+  --text-lg: 1.125rem; /* 18px — section headings, wordmark */
+  --text-lg--line-height: 1.3;
+
+  --text-2xl: 1.75rem; /* 28px — stat values, banner headline */
+  --text-2xl--line-height: 1.2;
+  /* No letter-spacing here on purpose: typography.md gives 28px text two
+   * different tracking values depending on role (banner headline = 0,
+   * stat/KPI numbers = -0.01em). Baking tracking into the shared size
+   * token would leak it onto whichever role doesn't want it — the
+   * `.text-kpi` utility below applies it explicitly instead. */
+
+  /* ---- Letter spacing (typography.md) ---- */
+  --tracking-tight: -0.01em;
+  --tracking-wide: 0.04em;
+
+  /* ---- Radius scale (components.md) ---- */
+  --radius-xs: 0.5rem; /* 8px */
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 1rem; /* 16px */
+  --radius-xl: 1.25rem; /* 20px */
+  --radius-2xl: 1.5rem; /* 24px */
+
+  /* ---- Shadows (colors.md / components.md) ---- */
+  --shadow-card: 0 1px 2px rgba(20, 30, 20, 0.04), 0 4px 12px rgba(20, 30, 20, 0.03);
+  --shadow-shell: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+  /* ---- Structural spacing tokens (layout.md) ---- */
+  --spacing-sidebar: 264px; /* fixed sidebar width */
+  --spacing-col-left: 776px; /* main-content left column: banner, stats, meeting lists */
+  --spacing-col-right: 376px; /* main-content right column: calendar, schedule, CTA */
+
+  /* ---- Breakpoints (responsive.md §31) ----
+   * Overrides Tailwind's stock sm/md/lg/xl (640/768/1024/1280) with the
+   * spec's own inferred breakpoint table so `sm:`/`md:`/`lg:`/`xl:` map to
+   * spec-accurate widths app-wide, the same "familiar utility names, spec-
+   * correct values" pattern already used for the radius scale. `lg`
+   * (1200px) is defined for completeness/future use — Phase 11 doesn't
+   * yet have a distinct `lg`-tier behavior, see DESIGN_SYSTEM.md. */
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1440px;
+}
+
+/*
+ * Semantic typography utilities (typography.md §14-18).
+ *
+ * Each bundles the exact size + weight + line-height + letter-spacing
+ * combination for one named role in the hierarchy, so components consume
+ * e.g. `text-kpi` instead of re-deriving "28px bold tight-tracked" by hand
+ * every time. Raw size tokens (text-xs, text-lg, ...) remain available
+ * above for one-off cases that don't fit a named role.
+ *
+ * `page heading` and `section heading` share `.text-heading` — the
+ * reference has no larger page-title style distinct from a section
+ * heading; both consume the same 18px/600 treatment until one shows up.
+ */
+@utility text-display {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  font-weight: 700;
+}
+
+@utility text-kpi {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-wordmark {
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+@utility text-heading {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 600;
+}
+
+@utility text-body {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: 400;
+}
+
+@utility text-body-sm {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: 400;
+}
+
+@utility text-nav {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: 500;
+}
+
+@utility text-label {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: 500;
+}
+
+@utility text-caption {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: 500;
+}
+
+@utility text-button {
+  font-size: var(--text-base);
+  line-height: 1;
+  font-weight: 600;
+}
+
+@utility text-overline {
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* ---- Global element defaults ---- */
+
+html {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-app text-ink font-sans;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-brand-800);
+  color: var(--color-surface);
+}
+
+/* Consistent keyboard focus ring as a fallback for any element that does not
+   define its own focus-visible treatment (primitives define their own). */
+:focus-visible {
+  outline: 2px solid var(--color-brand-800);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
