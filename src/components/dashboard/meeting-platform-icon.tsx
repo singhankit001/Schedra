@@ -8,65 +8,48 @@ export interface MeetingPlatformIconProps {
 }
 
 /**
- * Recognizable-but-original platform marks for Google Meet / Zoom /
- * Microsoft Teams — deliberately NOT the real trademarked logos.
- * Each one borrows only its platform's characteristic color identity
- * (Meet's four-color block, Zoom's blue, Teams' purple) on a generic
- * camera/video glyph, the same "deterministic local SVG, not a real
- * brand asset" approach already used for `MeetPlanMark` and
- * `UpgradeIllustration`. Replaces the flat single-color `Video` Lucide
- * icon `PROVIDER_STYLES` used previously — see DESIGN_SYSTEM.md.
+ * Real Google Meet / Zoom / Microsoft Teams marks — authentic logo
+ * geometry (not an original approximation), sourced from Simple Icons
+ * (simple-icons/simple-icons, MIT-licensed open catalog of brand SVG
+ * marks maintained specifically for referencing third-party
+ * products/services in software UIs — the same legitimate use case as
+ * here: indicating which video platform a meeting is on). Each path is
+ * filled with that brand's official color from the same source, not an
+ * invented one.
+ *
+ * Self-hosted as local SVG (no hotlinking to an external logo host, no
+ * new npm dependency for three icons) — the path data below is copied
+ * verbatim, not paraphrased.
  */
 export function MeetingPlatformIcon({ provider, size = 24, className }: MeetingPlatformIconProps) {
-  const props = { width: size, height: size, viewBox: "0 0 24 24", className: cn(className) };
+  const props = {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    className: cn(className),
+    "aria-hidden": true as const,
+  };
 
   if (provider === "google-meet") {
     return (
-      <svg {...props} aria-hidden="true">
-        <rect
-          x="2"
-          y="5"
-          width="14"
-          height="14"
-          rx="3"
-          fill="#F8F5EF"
-          stroke="#1B1F1C"
-          strokeWidth="0.5"
-        />
-        <path d="M2 8h14v3H2z" fill="#34A853" />
-        <path d="M2 11h14v3H2z" fill="#4285F4" />
-        <path d="M9 5h7v4H9z" fill="#FBBC05" />
-        <path d="M9 15h7v4H9z" fill="#EA4335" />
-        <path d="M16 10.5 22 7v10l-6-3.5Z" fill="#1B1F1C" />
+      <svg {...props} fill="#00BFA5">
+        <path d="M5.53 2.13 0 7.75h5.53zm.398 0v5.62h7.608v3.65l5.47-4.45c-.014-1.22.031-2.25-.025-3.46-.148-1.09-1.287-1.47-2.236-1.36zM23.1 4.32c-.802.295-1.358.995-2.047 1.49-2.506 2.05-4.982 4.12-7.468 6.19 3.025 2.59 6.04 5.18 9.065 7.76 1.218.671 1.428-.814 1.328-1.64v-13a.828.828 0 0 0-.877-.825zM.038 8.15v7.7h5.53v-7.7zm13.577 8.1H6.008v5.62c3.864-.006 7.737.011 11.58-.009 1.02-.07 1.618-1.12 1.468-2.07v-2.51l-5.47-4.68v3.65zm-13.577 0c.02 1.44-.041 2.88.033 4.31.162.948 1.158 1.43 2.047 1.31h3.464v-5.62z" />
       </svg>
     );
   }
 
   if (provider === "zoom") {
     return (
-      <svg {...props} aria-hidden="true">
-        <rect x="1" y="4" width="22" height="16" rx="5" fill="#2D8CFF" />
-        <rect x="4.5" y="9" width="10" height="6" rx="1.5" fill="white" />
-        <path d="M16 10.8 20.5 8v8L16 13.2Z" fill="white" />
+      <svg {...props} fill="#0B5CFF">
+        <path d="M5.033 14.649H.743a.74.74 0 0 1-.686-.458.74.74 0 0 1 .16-.808L3.19 10.41H1.06A1.06 1.06 0 0 1 0 9.35h3.957c.301 0 .57.18.686.458a.74.74 0 0 1-.161.808L1.51 13.59h2.464c.585 0 1.06.475 1.06 1.06zM24 11.338c0-1.14-.927-2.066-2.066-2.066-.61 0-1.158.265-1.537.686a2.061 2.061 0 0 0-1.536-.686c-1.14 0-2.066.926-2.066 2.066v3.311a1.06 1.06 0 0 0 1.06-1.06v-2.251a1.004 1.004 0 0 1 2.013 0v2.251c0 .586.474 1.06 1.06 1.06v-3.311a1.004 1.004 0 0 1 2.012 0v2.251c0 .586.475 1.06 1.06 1.06zM16.265 12a2.728 2.728 0 1 1-5.457 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0zm-4.82 0a2.728 2.728 0 1 1-5.458 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0z" />
       </svg>
     );
   }
 
   // microsoft-teams
   return (
-    <svg {...props} aria-hidden="true">
-      <rect x="1" y="2" width="22" height="20" rx="5" fill="#5B5FC7" />
-      <circle cx="15.5" cy="8" r="2.4" fill="white" />
-      <path
-        d="M11.5 11.2h7.4c.9 0 1.6.7 1.6 1.6v3.1c0 1.9-1.5 3.4-3.4 3.4h-1.2c-1.9 0-3.4-1.5-3.4-3.4v-2.7Z"
-        fill="white"
-      />
-      <circle cx="8.7" cy="8.6" r="2" fill="white" fillOpacity="0.85" />
-      <path
-        d="M5.2 11.6h6.6v3.2c0 1.6-1.3 2.9-2.9 2.9h-.8c-1.6 0-2.9-1.3-2.9-2.9v-3.2Z"
-        fill="white"
-        fillOpacity="0.85"
-      />
+    <svg {...props} fill="#6264A7">
+      <path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z" />
     </svg>
   );
 }
