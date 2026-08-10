@@ -1,4 +1,4 @@
-# MeetPlan
+# Schedra
 
 A premium meeting-management dashboard built with a screenshot-driven design
 system and a real, working functional layer on top of it — Next.js App
@@ -6,7 +6,7 @@ Router, TypeScript, Tailwind CSS v4, and Zustand.
 
 ## Overview
 
-MeetPlan is a Calendly-style scheduling dashboard: a sidebar-navigated shell
+Schedra is a Calendly-style scheduling dashboard: a sidebar-navigated shell
 around a "today at a glance" home screen (welcome banner, KPI stats, an
 upcoming-meetings list, a mini calendar, today's timeline, meeting types,
 and a New Meeting flow), plus full pages for meetings, calendar,
@@ -30,7 +30,7 @@ The project was built in two deliberate stages:
    real handlers rather than static markup.
 
 Nothing here talks to a real backend — there's no auth, no database, no
-calendar-provider integration. Every interaction is real *client-side*
+calendar-provider integration. Every interaction is real _client-side_
 behavior (state, validation, clipboard, toasts) against deterministic
 local mock data. See [Current Scope / Future Work](#current-scope--future-work)
 for the exact line between what's implemented and what isn't.
@@ -84,20 +84,20 @@ for the exact line between what's implemented and what isn't.
 
 Directly from `package.json` — nothing here is aspirational:
 
-| Layer | Library |
-| --- | --- |
-| Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack) |
-| UI | [React 19](https://react.dev) |
-| Language | [TypeScript 5](https://www.typescriptlang.org) (strict mode) |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com) (`@theme` tokens) |
-| State | [Zustand 5](https://zustand.docs.pmnd.rs) |
-| Data fetching plumbing | [TanStack Query 5](https://tanstack.com/query) (provider wired, no live queries yet — see Future Work) |
-| Validation / schemas | [Zod 4](https://zod.dev) |
-| Icons | [lucide-react](https://lucide.dev) |
-| Motion | [Framer Motion](https://www.framer.com/motion/) (shared variants defined, opt-in) |
-| Linting | [ESLint 9](https://eslint.org) (`eslint-config-next`, flat config) |
-| Formatting | [Prettier 3](https://prettier.io) (+ `prettier-plugin-tailwindcss`) |
-| Testing/QA | [Playwright](https://playwright.dev) (used for visual + functional QA scripts; no committed test suite yet) |
+| Layer                  | Library                                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Framework              | [Next.js 16](https://nextjs.org) (App Router, Turbopack)                                                    |
+| UI                     | [React 19](https://react.dev)                                                                               |
+| Language               | [TypeScript 5](https://www.typescriptlang.org) (strict mode)                                                |
+| Styling                | [Tailwind CSS v4](https://tailwindcss.com) (`@theme` tokens)                                                |
+| State                  | [Zustand 5](https://zustand.docs.pmnd.rs)                                                                   |
+| Data fetching plumbing | [TanStack Query 5](https://tanstack.com/query) (provider wired, no live queries yet — see Future Work)      |
+| Validation / schemas   | [Zod 4](https://zod.dev)                                                                                    |
+| Icons                  | [lucide-react](https://lucide.dev)                                                                          |
+| Motion                 | [Framer Motion](https://www.framer.com/motion/) (shared variants defined, opt-in)                           |
+| Linting                | [ESLint 9](https://eslint.org) (`eslint-config-next`, flat config)                                          |
+| Formatting             | [Prettier 3](https://prettier.io) (+ `prettier-plugin-tailwindcss`)                                         |
+| Testing/QA             | [Playwright](https://playwright.dev) (used for visual + functional QA scripts; no committed test suite yet) |
 
 ## Architecture
 
@@ -109,7 +109,7 @@ src/components/
   layout/         App shell + sidebar (structural, not page-specific)
   dashboard/      Page-specific composed components (stat cards, meeting
                   rows, the calendar widget, modals, menus, ...)
-  branding/       The MeetPlan logo/wordmark
+  branding/       The Schedra logo/wordmark
   illustrations/  Deterministic local SVG illustrations
 src/data/         Typed mock data modules (meetings, meeting types,
                   contacts, calendar events, notifications, account)
@@ -203,7 +203,7 @@ calendly/
     │   ├── page.tsx            (redirects "/" → "/dashboard")
     │   └── providers.tsx
     ├── components/
-    │   ├── branding/meetplan-logo.tsx
+    │   ├── branding/schedra-logo.tsx
     │   ├── dashboard/          (26 page-specific components)
     │   ├── illustrations/upgrade-illustration.tsx
     │   ├── layout/             (app shell + sidebar, 8 files)
@@ -338,14 +338,14 @@ says so explicitly rather than presenting it as verified.
 
 Directly from `package.json`:
 
-| Script | Command |
-| --- | --- |
-| `npm run dev` | `next dev` |
-| `npm run build` | `next build` |
-| `npm run start` | `next start` |
-| `npm run lint` | `eslint` |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run format` | `prettier --write .` |
+| Script                 | Command              |
+| ---------------------- | -------------------- |
+| `npm run dev`          | `next dev`           |
+| `npm run build`        | `next build`         |
+| `npm run start`        | `next start`         |
+| `npm run lint`         | `eslint`             |
+| `npm run typecheck`    | `tsc --noEmit`       |
+| `npm run format`       | `prettier --write .` |
 | `npm run format:check` | `prettier --check .` |
 
 ## Current Scope / Future Work

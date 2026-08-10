@@ -1,4 +1,4 @@
-# MeetPlan Design System
+# Schedra Design System
 
 Implementation notes for the token layer and UI primitives. **The
 authoritative visual reference is `visual-spec/*.md`** — this file explains
@@ -57,7 +57,7 @@ Two layers:
 | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `text-display`  | Welcome banner headline — 28/700/1.2                                                                                     |
 | `text-kpi`      | Stat values — 28/700/1.2, `-0.01em` tracking                                                                             |
-| `text-wordmark` | Sidebar "MeetPlan" — 18/700/1.2, `-0.01em` tracking                                                                      |
+| `text-wordmark` | Sidebar "Schedra" — 18/700/1.2, `-0.01em` tracking                                                                       |
 | `text-heading`  | Section headings (also stands in for "page heading" — the spec has no distinct larger page-title style yet) — 18/600/1.3 |
 | `text-body`     | Default body text — 14/400/1.4                                                                                           |
 | `text-body-sm`  | Secondary body / row subtitles — 13/400/1.4                                                                              |
@@ -189,17 +189,17 @@ replacement.
 
 ## Application shell & sidebar (`src/components/layout`, `src/components/branding`)
 
-| Component                                     | Notes                                                                                                                                                                                                                                                               |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AppShell`                                    | Outer canvas + rounded/shadowed shell. Unchanged from Phase 1.                                                                                                                                                                                                      |
-| `SidebarShell`                                | Structural only (width, light surface, padding, right border) — no assumed internal gap; `Sidebar` composes the actual rhythm. Background corrected to light in the final visual pass — see below.                                                                  |
-| `Sidebar`                                     | Composes `SidebarLogo` → `SidebarNavigation` (32px gap) → a `mt-auto`-pushed group of `SidebarUpgrade` + `SidebarAccount` (16px gap).                                                                                                                               |
-| `MeetPlanLogo` / `MeetPlanMark` (`branding/`) | Reusable brand lockup; the icon is a hand-drawn deterministic SVG (calendar + check), not a Lucide import, so it stays a dedicated brand asset. Icon square keeps its dark-green fill/white glyph; wordmark is dark ink (was white).                                |
-| `SidebarLogo`                                 | Wraps `MeetPlanLogo` in a `Link` to `/dashboard`, light-surface focus styling (was light-on-dark).                                                                                                                                                                  |
-| `SidebarNavigation` / `SidebarNavItem`        | Client component (`usePathname()`) driving `NAV_ITEMS` from [`src/lib/navigation.ts`](src/lib/navigation.ts) — no hardcoded `active` flags. Unimplemented routes get `prefetch={false}` so Next.js doesn't 404 an eager prefetch for a page that doesn't exist yet. |
-| `SidebarUpgrade`                              | Bespoke (mirrors `Card`'s color recipe by hand rather than importing it — see below) + reuses `Button` with `variant="primary"` (was `subtle`), no focus-ring override needed anymore.                                                                              |
-| `SidebarAccount`                              | A single `<button>` for the whole row (avatar + name/plan + chevron), not a div with a nested icon-button — avoids nesting interactive elements. No menu wired up yet.                                                                                              |
-| `UpgradeIllustration` (`illustrations/`)      | Small schematic potted-plant + calendar SVG, all colors via CSS custom properties — unchanged; its brand-green/sage/white palette already read correctly on both the old dark card and the new light one.                                                           |
+| Component                                   | Notes                                                                                                                                                                                                                                                               |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppShell`                                  | Outer canvas + rounded/shadowed shell. Unchanged from Phase 1.                                                                                                                                                                                                      |
+| `SidebarShell`                              | Structural only (width, light surface, padding, right border) — no assumed internal gap; `Sidebar` composes the actual rhythm. Background corrected to light in the final visual pass — see below.                                                                  |
+| `Sidebar`                                   | Composes `SidebarLogo` → `SidebarNavigation` (32px gap) → a `mt-auto`-pushed group of `SidebarUpgrade` + `SidebarAccount` (16px gap).                                                                                                                               |
+| `SchedraLogo` / `SchedraMark` (`branding/`) | Reusable brand lockup; the icon is a hand-drawn deterministic SVG (calendar + check), not a Lucide import, so it stays a dedicated brand asset. Icon square keeps its dark-green fill/white glyph; wordmark is dark ink (was white).                                |
+| `SidebarLogo`                               | Wraps `SchedraLogo` in a `Link` to `/dashboard`, light-surface focus styling (was light-on-dark).                                                                                                                                                                   |
+| `SidebarNavigation` / `SidebarNavItem`      | Client component (`usePathname()`) driving `NAV_ITEMS` from [`src/lib/navigation.ts`](src/lib/navigation.ts) — no hardcoded `active` flags. Unimplemented routes get `prefetch={false}` so Next.js doesn't 404 an eager prefetch for a page that doesn't exist yet. |
+| `SidebarUpgrade`                            | Bespoke (mirrors `Card`'s color recipe by hand rather than importing it — see below) + reuses `Button` with `variant="primary"` (was `subtle`), no focus-ring override needed anymore.                                                                              |
+| `SidebarAccount`                            | A single `<button>` for the whole row (avatar + name/plan + chevron), not a div with a nested icon-button — avoids nesting interactive elements. No menu wired up yet.                                                                                              |
+| `UpgradeIllustration` (`illustrations/`)    | Small schematic potted-plant + calendar SVG, all colors via CSS custom properties — unchanged; its brand-green/sage/white palette already read correctly on both the old dark card and the new light one.                                                           |
 
 ### Sidebar color scheme correction (final visual pass)
 
