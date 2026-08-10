@@ -6,6 +6,7 @@ import type { Contact } from "@/types/contact";
 import type { Notification } from "@/types/notification";
 import { mockUpcomingMeetings } from "@/data/mock-meetings";
 import { mockCalendarEvents } from "@/data/mock-calendar-events";
+import { mockFutureMeetings } from "@/data/mock-future-meetings";
 import { mockNotifications } from "@/data/mock-notifications";
 import { MEETING_TYPE_CARDS, type MeetingTypeCardData } from "@/data/mock-meeting-types";
 import {
@@ -112,7 +113,7 @@ interface AppState {
  * the 20th selected) is unchanged on first load.
  */
 export const useAppStore = create<AppState>((set, get) => ({
-  meetings: [...mockUpcomingMeetings, ...mockCalendarEvents],
+  meetings: [...mockUpcomingMeetings, ...mockCalendarEvents, ...mockFutureMeetings],
   meetingTypes: MEETING_TYPE_CARDS,
   notifications: mockNotifications,
   toasts: [],
@@ -227,6 +228,19 @@ export function getMeetingsForDate(meetings: Meeting[], isoDate: string): Meetin
   return meetings.filter(
     (meeting) => meeting.startsAt.slice(0, 10) === isoDate && meeting.status !== "cancelled",
   );
+}
+
+/** Count of every `scheduled` meeting today or later — backs the
+ * dashboard's "Upcoming Meetings" stat card. Deliberately broader than
+ * `getMeetingsForDate(meetings, today)` (which only covers what
+ * "Upcoming Meetings"/"Today's Schedule" display): the stat represents
+ * the total upcoming workload, not just what's visible in today's list,
+ * so creating a meeting for *any* future date — not only today —
+ * increments it. */
+export function getUpcomingMeetingsCount(meetings: Meeting[], todayIsoDate: string): number {
+  return meetings.filter(
+    (meeting) => meeting.status === "scheduled" && meeting.startsAt.slice(0, 10) >= todayIsoDate,
+  ).length;
 }
 
 /** Every unique contact (deduped by email) across every meeting's

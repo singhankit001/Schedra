@@ -31,15 +31,10 @@ function EditMeetingTypeForm({ card, onClose }: EditMeetingTypeFormProps) {
         showToast("Meeting type updated", "success");
         onClose();
       }}
+      noValidate
       className="flex flex-col gap-4"
     >
-      <Input
-        label="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        autoFocus
-      />
+      <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="secondary" onClick={onClose}>
           Cancel

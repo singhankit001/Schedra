@@ -3,7 +3,7 @@
 import { StatCard } from "@/components/dashboard/stat-card";
 import { STAT_CARDS } from "@/lib/stats";
 import { getTodayIsoDate } from "@/lib/meeting-time";
-import { getMeetingsForDate, useAppStore } from "@/stores/app-store";
+import { getUpcomingMeetingsCount, useAppStore } from "@/stores/app-store";
 
 /**
  * KPI/statistics grid. layout.md §8: 4 equal-width cards spanning the
@@ -13,13 +13,14 @@ import { getMeetingsForDate, useAppStore } from "@/stores/app-store";
  * is exactly what `grid-cols-4` computes automatically.
  *
  * "Upcoming Meetings" is the one card with an honest, real local
- * computation available — today's meeting count from the store — so its
- * `value` is overridden live instead of using `STAT_CARDS`' static "8".
- * Pending Invitations / Hours Booked / Revenue stay static: there's no
- * invitation, time-tracking, or billing model in this app to derive them
- * from, and fabricating one would be a fake number dressed up as a real
- * one, not a genuine "stats update" — worse than leaving them as the
- * existing, already-validated demo values.
+ * computation available: `getUpcomingMeetingsCount` (every `scheduled`
+ * meeting today or later — deliberately broader than what "Upcoming
+ * Meetings"/"Today's Schedule" list, which is only today's) — so its
+ * `value` is overridden live instead of using `STAT_CARDS`' static
+ * string. Pending Invitations / Hours Booked / Revenue stay static:
+ * there's no invitation, time-tracking, or billing model in this app to
+ * derive them from, and fabricating one would be a fake number dressed
+ * up as a real one, not a genuine "stats update."
  *
  * Responsive (Phase 11, responsive.md §31 → "Cards"): `grid-cols-4` only
  * from `xl` (1440px) up — the exact, validated desktop value. Below
@@ -29,7 +30,7 @@ import { getMeetingsForDate, useAppStore } from "@/stores/app-store";
  */
 export function DashboardStats() {
   const meetings = useAppStore((state) => state.meetings);
-  const todaysCount = getMeetingsForDate(meetings, getTodayIsoDate()).length;
+  const upcomingCount = getUpcomingMeetingsCount(meetings, getTodayIsoDate());
 
   return (
     <section
@@ -39,7 +40,7 @@ export function DashboardStats() {
       {STAT_CARDS.map((stat) => (
         <StatCard
           key={stat.id}
-          stat={stat.id === "upcoming-meetings" ? { ...stat, value: String(todaysCount) } : stat}
+          stat={stat.id === "upcoming-meetings" ? { ...stat, value: String(upcomingCount) } : stat}
         />
       ))}
     </section>

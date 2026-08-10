@@ -63,13 +63,12 @@ export default function MeetingTypesPage() {
       </div>
 
       <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title="New meeting type">
-        <form onSubmit={handleCreate} className="flex flex-col gap-4">
+        <form onSubmit={handleCreate} noValidate className="flex flex-col gap-4">
           <Input
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Discovery Call"
-            required
             autoFocus
           />
           <Input
@@ -79,7 +78,6 @@ export default function MeetingTypesPage() {
             label="Duration (minutes)"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
-            required
           />
           <Select
             label="Format"

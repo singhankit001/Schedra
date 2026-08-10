@@ -132,14 +132,13 @@ export function NewMeetingModal() {
       description="Schedule a meeting — it'll appear on your dashboard immediately."
       className="max-w-lg"
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Input
           label="Meeting title"
           value={form.title}
           onChange={(e) => updateField("title", e.target.value)}
           error={errors.title}
           placeholder="e.g. Design Review"
-          required
         />
 
         <Select
@@ -162,7 +161,6 @@ export function NewMeetingModal() {
             value={form.date}
             onChange={(e) => updateField("date", e.target.value)}
             error={errors.date}
-            required
           />
           <Input
             type="time"
@@ -170,7 +168,6 @@ export function NewMeetingModal() {
             value={form.startTime}
             onChange={(e) => updateField("startTime", e.target.value)}
             error={errors.startTime}
-            required
           />
           <Input
             type="time"
@@ -178,7 +175,6 @@ export function NewMeetingModal() {
             value={form.endTime}
             onChange={(e) => updateField("endTime", e.target.value)}
             error={errors.endTime}
-            required
           />
         </div>
 
