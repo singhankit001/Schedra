@@ -234,6 +234,63 @@ npm run build
 npm run start
 ```
 
+## Deployment
+
+Schedra is a zero-config deploy for any Next.js-native host: no
+environment variables, no database, no external API keys, no secrets —
+every list is deterministic local mock data (`src/data/*`), so there is
+nothing to provision before the app runs. `next build` statically
+prerenders all 13 routes (confirmed above), and `next start` serves the
+result with no dev-only dependency.
+
+### The recommended way: Vercel, from this repo's GitHub remote
+
+This project's `origin` remote already points at
+`https://github.com/singhankit001/Schedra` — Vercel (the company behind
+Next.js) is the natural target because it builds `next build` output
+natively (correct caching, image optimization, and the `next/og`
+`ImageResponse` icon routes this project uses for its favicon all work
+out of the box, no extra config).
+
+1. Push the current `main` branch (already the case if you're working
+   from a clone with this remote set).
+2. Go to [vercel.com/new](https://vercel.com/new) and choose **Import
+   Git Repository** → select `singhankit001/Schedra`.
+3. Leave every setting on its default — Vercel auto-detects Next.js,
+   sets the build command to `next build`, the output to `.next`, and
+   the install command to `npm install`. Do **not** add any environment
+   variables; none are needed.
+4. Click **Deploy**. The first build takes roughly the same ~1–2
+   seconds `next build` takes locally, plus install time.
+5. Every subsequent push to `main` redeploys automatically; every pull
+   request gets its own preview URL for free — useful if you keep
+   iterating on the visual spec.
+
+Node engine is pinned to `>=20.9.0` in `package.json` (Next 16's own
+minimum), so Vercel's default Node runtime satisfies it with no
+extra configuration.
+
+### Alternatives (if not Vercel)
+
+- **Netlify** — supports Next.js App Router via its official Next.js
+  runtime plugin; same "import the repo, no env vars, default build
+  command" flow.
+- **A container / any Node host** (Fly.io, Railway, a raw VM) — add
+  `output: "standalone"` to `next.config.ts` first (keeps the image
+  small by tracing only the files actually needed at runtime), then:
+  ```dockerfile
+  FROM node:20-slim
+  WORKDIR /app
+  COPY . .
+  RUN npm ci && npm run build
+  EXPOSE 3000
+  CMD ["npm", "run", "start"]
+  ```
+  This repo doesn't ship a `Dockerfile` — add one only if you're
+  deliberately avoiding a managed platform; for a project with this
+  shape (no backend, no persistent state to co-locate a database with),
+  it's extra operational surface for no real benefit over Vercel/Netlify.
+
 ## Validation
 
 Every change in this project is checked with the same four commands
