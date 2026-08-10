@@ -210,7 +210,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             name: input.name,
             durationMinutes: input.durationMinutes,
             format: input.format,
-            bookingUrl: `https://meetplan.app/book/${slugify(input.name)}`,
+            bookingUrl: `https://schedra.app/book/${slugify(input.name)}`,
           },
           icon: Video,
           accent: "neutral",

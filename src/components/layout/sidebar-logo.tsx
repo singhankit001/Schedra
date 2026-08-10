@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MeetPlanLogo } from "@/components/branding/meetplan-logo";
+import { SchedraLogo } from "@/components/branding/schedra-logo";
 
 /**
  * Sidebar-specific usage of the brand lockup: wraps it in a link back to
@@ -13,10 +13,10 @@ export function SidebarLogo() {
   return (
     <Link
       href="/dashboard"
-      aria-label="MeetPlan — go to dashboard"
+      aria-label="Schedra — go to dashboard"
       className="focus-visible:ring-brand-800 focus-visible:ring-offset-app inline-flex rounded-xs focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
     >
-      <MeetPlanLogo />
+      <SchedraLogo />
     </Link>
   );
 }

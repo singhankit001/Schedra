@@ -8,7 +8,7 @@ import { TodaysSchedule } from "@/components/dashboard/todays-schedule";
 import { NewMeetingCta } from "@/components/dashboard/new-meeting-cta";
 
 export const metadata: Metadata = {
-  title: "Dashboard · MeetPlan",
+  title: "Dashboard · Schedra",
 };
 
 /**

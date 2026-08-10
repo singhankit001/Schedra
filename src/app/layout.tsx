@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MeetPlan",
+  title: "Schedra",
   description: "Schedule, host, and manage meetings in one place.",
 };
 

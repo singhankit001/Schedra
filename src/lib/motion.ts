@@ -1,7 +1,7 @@
 import type { Transition, Variants } from "framer-motion";
 
 /**
- * Shared, calm motion primitives for MeetPlan.
+ * Shared, calm motion primitives for Schedra.
  *
  * The reference is a low-motion, premium SaaS interface — nothing in the
  * screenshot implies bold or bouncy animation. This file only defines the

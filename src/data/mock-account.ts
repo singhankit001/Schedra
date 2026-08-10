@@ -9,6 +9,6 @@ import type { User } from "@/types/user";
 export const mockAccount: User = {
   id: "local-account",
   name: "Account",
-  email: "account@meetplan.app",
+  email: "account@schedra.app",
   plan: "starter",
 };

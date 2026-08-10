@@ -7,7 +7,7 @@ import type { MeetingType } from "@/types/meeting-type";
  * genuine, working Clipboard API interaction (the copy itself is real),
  * just not a link that resolves to an actual call. */
 export function getMeetingShareLink(meeting: Meeting): string {
-  return meeting.joinUrl ?? `https://meetplan.app/join/${meeting.id}`;
+  return meeting.joinUrl ?? `https://schedra.app/join/${meeting.id}`;
 }
 
 /** Copies the meeting's share link via the real Clipboard API. Returns
@@ -24,7 +24,7 @@ export async function copyMeetingLink(meeting: Meeting): Promise<boolean> {
 
 /** Same idea, for a meeting type's own booking link. */
 export function getMeetingTypeShareLink(meetingType: MeetingType): string {
-  return meetingType.bookingUrl ?? `https://meetplan.app/book/${meetingType.id}`;
+  return meetingType.bookingUrl ?? `https://schedra.app/book/${meetingType.id}`;
 }
 
 export async function copyMeetingTypeLink(meetingType: MeetingType): Promise<boolean> {
