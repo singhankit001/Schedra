@@ -39,7 +39,7 @@ function ToastItem({
   return (
     <div
       role="status"
-      className="border-border bg-surface shadow-card flex w-80 items-start gap-3 rounded-md border p-3"
+      className="border-border bg-surface shadow-card flex w-[calc(100vw-2rem)] items-start gap-3 rounded-md border p-3 sm:w-80"
     >
       <Icon className={cn("mt-0.5 h-5 w-5 shrink-0", VARIANT_COLOR[variant])} aria-hidden="true" />
       <p className="text-body-sm text-ink flex-1">{message}</p>

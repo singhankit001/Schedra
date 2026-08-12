@@ -98,18 +98,31 @@
   --shadow-shell: 0 20px 60px rgba(0, 0, 0, 0.25);
 
   /* ---- Structural spacing tokens (layout.md) ---- */
-  --spacing-sidebar: 264px; /* fixed sidebar width */
+  --spacing-sidebar: 264px; /* fixed sidebar width — full labeled nav, ≥lg (1200px) */
+  --spacing-sidebar-rail: 80px; /* collapsed icon-only sidebar — tablet, ≥tablet (768px) and <lg */
   --spacing-col-left: 776px; /* main-content left column: banner, stats, meeting lists */
   --spacing-col-right: 376px; /* main-content right column: calendar, schedule, CTA */
 
-  /* ---- Breakpoints (responsive.md §31) ----
+  /* ---- Breakpoints (responsive.md §31 + Phase "Responsive Overhaul") ----
    * Overrides Tailwind's stock sm/md/lg/xl (640/768/1024/1280) with the
    * spec's own inferred breakpoint table so `sm:`/`md:`/`lg:`/`xl:` map to
    * spec-accurate widths app-wide, the same "familiar utility names, spec-
-   * correct values" pattern already used for the radius scale. `lg`
-   * (1200px) is defined for completeness/future use — Phase 11 doesn't
-   * yet have a distinct `lg`-tier behavior, see DESIGN_SYSTEM.md. */
+   * correct values" pattern already used for the radius scale.
+   *
+   * `tablet` (768px) is the one net-new token added by the responsive
+   * overhaul: the navigation-paradigm boundary. Below it the sidebar is
+   * fully off-canvas (drawer, opened from a header hamburger); at/above it
+   * a persistent sidebar is always on screen — first as a `sidebar-rail`
+   * (80px, icon-only) from `tablet` up, then the full 264px labeled
+   * sidebar from `lg` (1200px) up, finally consuming the tier `lg` was
+   * "defined but not yet consumed" for per the old Phase 11 notes. This is
+   * a distinct axis from `md` (900px, unchanged, still gates content
+   * density/padding/grid-column-count) — a tablet at 820px gets the rail
+   * nav *and* the denser <md spacing, which is correct: nav paradigm and
+   * content density are orthogonal, not the same breakpoint wearing two
+   * hats. */
   --breakpoint-sm: 600px;
+  --breakpoint-tablet: 768px;
   --breakpoint-md: 900px;
   --breakpoint-lg: 1200px;
   --breakpoint-xl: 1440px;
@@ -197,6 +210,24 @@
   font-weight: 500;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
+}
+
+/*
+ * Touch hit-slop: invisibly extends a control's tappable area by 8px on
+ * every side without changing its visual footprint — for icon buttons
+ * whose validated visual size (20/24px, components.md §26-28) is smaller
+ * than a comfortable touch target. Desktop-neutral (a mouse pointer
+ * ignores the extra hit area entirely; only touch/pointer hit-testing
+ * benefits), so it costs nothing visually at any breakpoint. Applied by
+ * `IconButton` itself rather than per call site.
+ */
+@utility tap-area {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+  }
 }
 
 /* ---- Global element defaults ---- */

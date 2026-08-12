@@ -21,6 +21,13 @@ const WEEKDAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
  * whichever date is selected via `getMeetingsForDate` over the full
  * store (today's dashboard meetings + the May 2025 demo events), not a
  * static "coming soon" placeholder.
+ *
+ * Responsive: the month grid and day-detail panel were a plain `flex`
+ * row with the panel pinned at a fixed 384px — below `lg` (1200px) that
+ * guaranteed horizontal overflow (the panel alone exceeds a phone
+ * viewport). Now `flex-col lg:flex-row`: both panels stack full-width
+ * below `lg`, sit side by side (month grid flexible, day panel fixed
+ * 384px) at/above it — the exact original desktop layout, unchanged.
  */
 export default function CalendarPage() {
   const year = useAppStore((state) => state.calendarYear);
@@ -37,7 +44,7 @@ export default function CalendarPage() {
     <div className="flex flex-col gap-6">
       <PageHeader title="Calendar" description="Browse any month and see what's scheduled." />
 
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         <Card padding="lg" radius="xl" className="flex flex-1 flex-col">
           <div className="flex items-center justify-between">
             <h2 className="text-md text-ink font-semibold">{calendarMonth.label}</h2>
@@ -77,11 +84,11 @@ export default function CalendarPage() {
                   type="button"
                   onClick={() => selectDate(day.isoDate)}
                   aria-pressed={isSelected}
-                  className="focus-visible:ring-brand-800 flex h-16 flex-col items-center justify-center gap-1 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+                  className="focus-visible:ring-brand-800 flex h-14 flex-col items-center justify-center gap-1 rounded-sm focus-visible:ring-2 focus-visible:outline-none sm:h-16"
                 >
                   <span
                     className={cn(
-                      "flex h-9 w-9 items-center justify-center rounded-full text-sm transition-colors",
+                      "flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors sm:h-9 sm:w-9",
                       isSelected
                         ? "bg-brand-800 text-surface font-semibold"
                         : "hover:bg-surface-alt font-normal",
@@ -101,7 +108,7 @@ export default function CalendarPage() {
           </div>
         </Card>
 
-        <Card padding="lg" className="flex w-96 shrink-0 flex-col">
+        <Card padding="lg" className="flex w-full flex-col lg:w-96 lg:shrink-0">
           <h2 className="text-md text-ink font-semibold">
             {new Date(`${selectedDate}T00:00:00Z`).toLocaleDateString("en-US", {
               timeZone: "UTC",

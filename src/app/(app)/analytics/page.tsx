@@ -31,7 +31,7 @@ export default function AnalyticsPage() {
     <div className="flex flex-col gap-6">
       <PageHeader title="Analytics" description="A live snapshot of your scheduling activity." />
 
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon }) => (
           <Card key={label} className="flex flex-col gap-4">
             <span className="bg-app flex h-10 w-10 items-center justify-center rounded-full">

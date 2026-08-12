@@ -83,7 +83,7 @@ export function Dialog({ open, onClose, title, description, children, className 
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4">
       <div className="bg-ink/40 absolute inset-0" aria-hidden="true" onClick={onClose} />
       <div
         ref={panelRef}
@@ -92,7 +92,12 @@ export function Dialog({ open, onClose, title, description, children, className 
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         className={cn(
-          "bg-surface shadow-shell relative flex max-h-[calc(100vh-4rem)] w-full max-w-md flex-col rounded-xl",
+          // Below `sm` (600px) the dialog goes full-bleed/full-height —
+          // a near-full-screen mobile flow rather than a shrunk desktop
+          // card floating over visible backdrop margins — then reverts
+          // to the exact validated desktop card (rounded, margined,
+          // capped height) from `sm` up, unchanged.
+          "bg-surface shadow-shell relative flex h-[100dvh] w-full max-w-md flex-col sm:h-auto sm:max-h-[calc(100dvh-4rem)] sm:rounded-xl",
           className,
         )}
       >

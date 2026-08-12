@@ -154,7 +154,13 @@ export function NewMeetingModal() {
           ))}
         </Select>
 
-        <div className="grid grid-cols-3 gap-3">
+        {/* `grid-cols-1` below `sm` (600px): at 3 columns inside a
+            near-full-bleed mobile dialog, native date/time pickers
+            shrink to ~90px each — cramped rather than unusable, but not
+            the comfortable, "designed for touch" target this needs.
+            `sm:grid-cols-3` is the exact original desktop layout,
+            unchanged, since the dialog is already `sm:max-w-lg` there. */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Input
             type="date"
             label="Date"

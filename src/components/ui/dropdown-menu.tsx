@@ -64,7 +64,12 @@ export function DropdownMenu({
           role="menu"
           aria-label={label}
           className={cn(
-            "bg-surface border-border shadow-shell absolute z-40 w-56 rounded-md border p-1",
+            // `max-w-[calc(100vw-2rem)]` is a safety clamp, not the normal
+            // sizing rule: a fixed-width panel anchored to a trigger near
+            // a narrow viewport's edge could otherwise render partially
+            // off-screen. Free at every width this matters at (only binds
+            // below ~256px viewport).
+            "bg-surface border-border shadow-shell absolute z-40 w-56 max-w-[calc(100vw-2rem)] rounded-md border p-1",
             align === "end" ? "right-0" : "left-0",
             side === "bottom" ? "top-full mt-2" : "bottom-full mb-2",
           )}

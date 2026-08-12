@@ -35,6 +35,13 @@ export function SchedraMark({ size = 18, className }: SchedraMarkProps) {
 
 export interface SchedraLogoProps {
   className?: string;
+  /** Extra classes for the wordmark span only — the collapsed sidebar
+   * rail (tablet, 768–1199px) passes `"hidden lg:inline"` so the same
+   * lockup reads as icon-only in the rail and gains its label back at the
+   * full desktop sidebar width, with no separate "compact logo"
+   * component. Every other call site (mobile drawer, anywhere else)
+   * leaves this unset and always gets the full lockup. */
+  wordmarkClassName?: string;
 }
 
 /**
@@ -45,13 +52,13 @@ export interface SchedraLogoProps {
  * not white — corrected against the reference image, which shows the
  * sidebar as a light surface. See DESIGN_SYSTEM.md.
  */
-export function SchedraLogo({ className }: SchedraLogoProps) {
+export function SchedraLogo({ className, wordmarkClassName }: SchedraLogoProps) {
   return (
     <span className={cn("flex items-center gap-2", className)}>
       <span className="bg-brand-800 text-surface flex h-8 w-8 shrink-0 items-center justify-center rounded-xs">
         <SchedraMark size={18} />
       </span>
-      <span className="text-wordmark text-ink">Schedra</span>
+      <span className={cn("text-wordmark text-ink", wordmarkClassName)}>Schedra</span>
     </span>
   );
 }

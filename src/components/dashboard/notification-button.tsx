@@ -56,7 +56,7 @@ export function NotificationButton() {
         <div
           role="dialog"
           aria-label="Notifications"
-          className="bg-surface border-border shadow-shell absolute top-full right-0 z-40 mt-2 w-80 rounded-md border p-2"
+          className="bg-surface border-border shadow-shell absolute top-full right-0 z-40 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-md border p-2"
         >
           <div className="flex items-center justify-between px-2 py-1">
             <p className="text-label text-ink">Notifications</p>

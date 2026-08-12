@@ -19,10 +19,12 @@ export default function TeamPage() {
             >
               <Avatar alt={member.name} initials={getInitials(member.name)} size="md" />
               <div className="flex min-w-0 flex-1 flex-col">
-                <p className="text-body text-ink font-medium">{member.name}</p>
-                <p className="text-caption text-ink-muted">{member.email}</p>
+                <p className="text-body text-ink truncate font-medium">{member.name}</p>
+                <p className="text-caption text-ink-muted truncate">{member.email}</p>
               </div>
-              <Badge variant={member.role === "Owner" ? "brand" : "neutral"}>{member.role}</Badge>
+              <Badge className="shrink-0" variant={member.role === "Owner" ? "brand" : "neutral"}>
+                {member.role}
+              </Badge>
             </li>
           ))}
         </ul>

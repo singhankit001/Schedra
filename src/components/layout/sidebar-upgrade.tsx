@@ -1,6 +1,8 @@
 "use client";
 
+import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { UpgradeIllustration } from "@/components/illustrations/upgrade-illustration";
 import { useAppStore } from "@/stores/app-store";
 
@@ -35,6 +37,33 @@ export function SidebarUpgrade() {
       >
         Upgrade Now
       </Button>
+    </div>
+  );
+}
+
+/**
+ * Rail-mode stand-in for `SidebarUpgrade` — the illustrated promo card
+ * (illustration + 2 lines of copy + a full-width button) has no room in
+ * the 80px tablet rail (768–1199px), so the persistent sidebar swaps it
+ * for a single centered icon button that opens the exact same
+ * `UpgradeModal`, preserving the feature rather than just hiding it. Only
+ * ever rendered inside the rail tier (`Sidebar` wraps it `lg:hidden`) —
+ * the mobile drawer and the full desktop sidebar both use the real
+ * `SidebarUpgrade` card instead.
+ */
+export function SidebarUpgradeCompact() {
+  const openModal = useAppStore((state) => state.openModal);
+
+  return (
+    <div className="flex justify-center">
+      <IconButton
+        icon={<Sparkles className="h-4 w-4" aria-hidden="true" />}
+        aria-label="Upgrade to Pro"
+        title="Upgrade to Pro"
+        size="lg"
+        variant="solid"
+        onClick={() => openModal({ type: "upgrade" })}
+      />
     </div>
   );
 }

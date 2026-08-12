@@ -50,6 +50,11 @@ const variantStyles: Record<IconButtonVariant, string> = {
   ghost: "bg-transparent text-ink-muted hover:bg-surface-alt hover:text-ink",
 };
 
+// `xs`/`sm` (20/24px) are below a comfortable touch target — `tap-area`
+// (globals.css) invisibly extends their hit area by 8px/side for
+// touch/pointer hit-testing without changing the validated visual size.
+const touchSlopSizes: IconButtonSize[] = ["xs", "sm"];
+
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
   { icon, size = "md", variant = "ghost", shape, className, type, ...props },
   ref,
@@ -65,6 +70,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
         sizeStyles[size],
         shapeStyles[shape ?? defaultShapeForSize[size]],
         variantStyles[variant],
+        touchSlopSizes.includes(size) && "tap-area",
         className,
       )}
       {...props}
